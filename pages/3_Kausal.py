@@ -91,7 +91,7 @@ def main():
    
     if opsi_cem=='Simulasi CATE':
        lokasi = st.multiselect('Kabupaten/Kota yang disertakan',
-                           kabkot, default = kabkot, placeholder="Pilih Kabupaten/Kota")
+                           kabkot, default = kabkot)
        batas_tol = st.number_input('Jarak rumah ke gerbang Tol terdekat (KM)', step = 0.1,
                                min_value=0.3)
        m_jarak = st.slider('Maksimal Jarak Control group', 0, jarak_terjauh , 15)
