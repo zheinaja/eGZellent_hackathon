@@ -12,6 +12,7 @@ from streamlit_folium import folium_static
 #buka data set
 df = pd.read_csv('Data/clean_data_rumah 2023.csv', sep=';')
 umk = pd.read_excel('Data/UMK 2023.xlsx')
+umk = umk.sort_values(by=['UMK'], inplace=True)
 lokasi = pd.read_excel('Data/koordinat Kecamatan Jawa.xlsx')
 lok_kota = pd.read_excel('Data/lonlatkec_kota.xlsx')
 
