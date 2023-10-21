@@ -26,55 +26,59 @@ m_jarak = []
 tol = ''
 
 def cem(batas_tol, lokasi, m_jarak):
-    df_run = df.copy()
-    df_run = df_run[df_run['Kab/Kota'].isin(lokasi)]
-    df_run = df_run[df_run['tol terdekat'] <= m_jarak]
-
-    def treatment(row):
-        if row['tol terdekat'] <= batas_tol :
-            val = 1
-        else:
-            val = 0
-        return val
-
-    df_run['tol'] = df_run.apply(treatment, axis=1)
-
-    #log harga
-    df_run['log_harga'] = np.log2(df_run['Harga'])
-
-    # Count how many treated and control observations
-    # are in each bin
-    treated = df_run.loc[df_run['tol'] == 1].groupby(['Luas Tanah','Luas Bangunan', 'Kamar Tidur']).size().to_frame('treated')
-    control = df_run.loc[df_run['tol'] == 0].groupby(['Luas Tanah','Luas Bangunan', 'Kamar Tidur']).size().to_frame('control')
-
-    # Merge those counts back in
-    df_run = df_run.join(treated, on = ['Luas Tanah','Luas Bangunan', 'Kamar Tidur'])
-    df_run = df_run.join(control, on = ['Luas Tanah','Luas Bangunan','Kamar Tidur'])
-
-    # For treated obs, weight is 1 if there are any control matches
-    df_run['weight'] = 0
-    df_run.loc[(df_run['tol'] == 1) & (df_run['control'] > 0), 'weight'] = 1
-
-    # For control obs, weight depends on total number of treated and control
-    # obs that found matches
-    totalcontrols = sum(df_run.loc[df_run['tol']==0]['treated'] > 0)
-    totaltreated = sum(df_run.loc[df_run['tol']==1]['control'] > 0)
-
-    # Then, control weights are treated/control in the bin,
-    # times control/treated overall
-    df_run['controlweights'] = (df_run['treated']/df_run['control'])*(totalcontrols/totaltreated)
-    df_run.loc[(df_run['tol'] == 0), 'weight'] = df_run['controlweights']
-
-    # Now, use the weights to estimate the effect
-    df_run = df_run.replace(np.inf, np.nan).replace(-np.inf, np.nan).dropna()
-
-    result = sm.wls(formula = 'log_harga ~ tol', weights = df_run['controlweights'], data = df_run).fit()
-
-    hasil = pd.read_html(result.summary().tables[1].as_html(),header=0,index_col=0)[0]
-    koef_tol = hasil['coef'].values[1]
-    conf_tol =hasil['P>|t|'].values[1]
-    st.write(f'Dengan tingkat kepercayaan sebesar {100-conf_tol}%, efek keberadaan gerbang tol dengan radius \
-          :blue[{batas_tol} kilometer] dari rumah mengakibatkan peningkatan harga rumah sebesar :red[{np.round(koef_tol*100,2)}%]')
+    try:
+        df_run = df.copy()
+        df_run = df_run[df_run['Kab/Kota'].isin(lokasi)]
+        df_run = df_run[df_run['tol terdekat'] <= m_jarak]
+    
+        def treatment(row):
+            if row['tol terdekat'] <= batas_tol :
+                val = 1
+            else:
+                val = 0
+            return val
+    
+        df_run['tol'] = df_run.apply(treatment, axis=1)
+    
+        #log harga
+        df_run['log_harga'] = np.log2(df_run['Harga'])
+    
+        # Count how many treated and control observations
+        # are in each bin
+        treated = df_run.loc[df_run['tol'] == 1].groupby(['Luas Tanah','Luas Bangunan', 'Kamar Tidur']).size().to_frame('treated')
+        control = df_run.loc[df_run['tol'] == 0].groupby(['Luas Tanah','Luas Bangunan', 'Kamar Tidur']).size().to_frame('control')
+    
+        # Merge those counts back in
+        df_run = df_run.join(treated, on = ['Luas Tanah','Luas Bangunan', 'Kamar Tidur'])
+        df_run = df_run.join(control, on = ['Luas Tanah','Luas Bangunan','Kamar Tidur'])
+    
+        # For treated obs, weight is 1 if there are any control matches
+        df_run['weight'] = 0
+        df_run.loc[(df_run['tol'] == 1) & (df_run['control'] > 0), 'weight'] = 1
+    
+        # For control obs, weight depends on total number of treated and control
+        # obs that found matches
+        totalcontrols = sum(df_run.loc[df_run['tol']==0]['treated'] > 0)
+        totaltreated = sum(df_run.loc[df_run['tol']==1]['control'] > 0)
+    
+        # Then, control weights are treated/control in the bin,
+        # times control/treated overall
+        df_run['controlweights'] = (df_run['treated']/df_run['control'])*(totalcontrols/totaltreated)
+        df_run.loc[(df_run['tol'] == 0), 'weight'] = df_run['controlweights']
+    
+        # Now, use the weights to estimate the effect
+        df_run = df_run.replace(np.inf, np.nan).replace(-np.inf, np.nan).dropna()
+    
+        result = sm.wls(formula = 'log_harga ~ tol', weights = df_run['controlweights'], data = df_run).fit()
+    
+        hasil = pd.read_html(result.summary().tables[1].as_html(),header=0,index_col=0)[0]
+        koef_tol = hasil['coef'].values[1]
+        conf_tol =hasil['P>|t|'].values[1]
+        st.write(f'Dengan tingkat kepercayaan sebesar {100-conf_tol}%, efek keberadaan gerbang tol dengan radius \
+              :blue[{batas_tol} kilometer] dari rumah mengakibatkan peningkatan harga rumah sebesar :red[{np.round(koef_tol*100,2)}%]')
+    except:
+        st.write(f'Tidak ada rumah dalam radius\
+              :blue[{batas_tol} kilometer] dari jalan tol')
 
 def main():
     # judul
