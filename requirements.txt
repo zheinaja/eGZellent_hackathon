@@ -1,7 +1,7 @@
 streamlit
 numpy
 pandas
-folium==0.7.0
+folium
 streamlit_folium
 matplotlib
 seaborn
@@ -9,3 +9,4 @@ plotly
 statsmodels
 openpyxl
 lxml
+branca==0.3.1
