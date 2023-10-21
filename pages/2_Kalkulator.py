@@ -13,7 +13,7 @@ from streamlit_folium import folium_static
 df = pd.read_csv('Data/clean_data_rumah 2023.csv', sep=';')
 lokasi = pd.read_excel('Data/koordinat Kecamatan Jawa.xlsx')
 lok_kota = pd.read_excel('Data/lonlatkec_kota.xlsx')
-
+daftar_kota = lok_kota[lok_kota['kota'] != 'KEPULAUAN SERIBU']
 
 #buat id kota
 df ['ID_kecamatan'] = df ['ID_kecamatan'].astype (str)
@@ -121,10 +121,10 @@ untuk menampilkan hasil dapat meng-klik tombol :blue[Lokasi yang dapat terjangka
 
                 ''')
    #input data
-   nama_kota = st.selectbox('Lokasi Kerja',lok_kota['kota'])
-   hntenor_cicilan = st.number_input('tenor pinjaman (tahun)', step = 0.1)
+   nama_kota = st.selectbox('Lokasi Kerja',daftar_kota['kota'])
+   hntenor_cicilan = st.number_input('tenor pinjaman (tahun)', step = 1)
    suku_bunga = st.number_input('suku bunga (%)', step = 0.1)
-   uang_muka = st.number_input('uang muka (%)', step = 0.1)
+   uang_muka = st.number_input('uang muka (%)', step = 1)
    gaji = st.number_input('Penghasilan per Bulan(Rp)', step = 1e6)
    jarak = st.number_input('Radius Maksimal ke Lokasi Kerja(KM)', step = 0.1)
 
