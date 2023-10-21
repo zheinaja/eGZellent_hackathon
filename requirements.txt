@@ -1,7 +1,7 @@
 streamlit
 numpy
 pandas
-folium
+folium==0.7.0
 streamlit_folium
 matplotlib
 seaborn
