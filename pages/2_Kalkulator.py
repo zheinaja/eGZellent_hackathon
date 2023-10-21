@@ -11,8 +11,6 @@ from streamlit_folium import folium_static
 
 #buka data set
 df = pd.read_csv('Data/clean_data_rumah 2023.csv', sep=';')
-umk = pd.read_excel('Data/UMK 2023.xlsx')
-umk = umk.sort_values(by=['UMK'], inplace=True)
 lokasi = pd.read_excel('Data/koordinat Kecamatan Jawa.xlsx')
 lok_kota = pd.read_excel('Data/lonlatkec_kota.xlsx')
 
@@ -20,7 +18,6 @@ lok_kota = pd.read_excel('Data/lonlatkec_kota.xlsx')
 #buat id kota
 df ['ID_kecamatan'] = df ['ID_kecamatan'].astype (str)
 df['ID_Kota'] =df['ID_kecamatan'].str[:4]
-umk['KODE'] = umk['KODE'].astype (str)
 lokasi.drop(['Unnamed: 4', 'Unnamed: 5', 'location'], axis=1, inplace=True)
 lokasi = lokasi.rename(columns={'lokasi': 'Lokasi'})
 
@@ -124,7 +121,7 @@ untuk menampilkan hasil dapat meng-klik tombol :blue[Lokasi yang dapat terjangka
 
                 ''')
    #input data
-   nama_kota = st.selectbox('Lokasi Kerja',umk['Kabupaten/Kota'])
+   nama_kota = st.selectbox('Lokasi Kerja',lok_kota['kota'])
    hntenor_cicilan = st.number_input('tenor pinjaman (tahun)', step = 0.1)
    suku_bunga = st.number_input('suku bunga (%)', step = 0.1)
    uang_muka = st.number_input('uang muka (%)', step = 0.1)
