@@ -93,7 +93,7 @@ def main():
        lokasi = st.multiselect('Kabupaten/Kota yang disertakan',
                            kabkot, default = kabkot)
        batas_tol = st.number_input('Jarak rumah ke gerbang Tol terdekat (KM)', step = 0.1,
-                               min_value=0.3)
+                               min_value=1)
        m_jarak = st.slider('Maksimal Jarak Control group', 0, jarak_terjauh , 15)
        
        
