@@ -9,4 +9,5 @@ plotly
 statsmodels
 openpyxl
 lxml
+math
 branca==0.3.1
