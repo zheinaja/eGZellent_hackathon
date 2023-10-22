@@ -30,81 +30,84 @@ gaji = []
 jarak = []
 
 def beli_rumah(nama_kota, hntenor_cicilan, suku_bunga, uang_muka, gaji, jarak):
-  nama_kota = str.upper(nama_kota)
-
-  suku_bunga = suku_bunga/100
-  uang_muka = uang_muka/100
-  max_cicilan = gaji*0.3
-
-
-  #lokasi yang masuk kedalam cicilan (kolom Lokasi)
-  df['cicilan'] = (suku_bunga/12) * (1/ (1- (1+suku_bunga/12)**(-(hntenor_cicilan*12))))* df['Harga'] *(1-uang_muka)
-  df['cicilan'] = df['cicilan'].astype(float)
-  df_beli = df[df['cicilan'] <= max_cicilan]
-
-  #groupby harga di average kolom harga rata2 (Kolom Harga Rata2)
-  df_beli1 = df_beli.groupby(['Lokasi'])['Harga'].mean().reset_index()
-  df_beli1 = round(df_beli1.rename(columns={'Harga': 'Harga Rata2'}))
-
-  #Hitung Jumlah rumah yang dijual (% rumah terbeli)
-  df_beli2 = df_beli.groupby(['Lokasi'])['Harga'].count().reset_index()
-  df_beli2 = df_beli2.rename(columns={'Harga': 'rumah beli'})
-  df_beli3 = df.groupby(['Lokasi'])['Harga'].count().reset_index()
-  df_beli3 = df_beli3.rename(columns={'Harga': 'rumah jual'})
-  df_beli2 = pd.merge(df_beli2, df_beli3, how='left', left_on='Lokasi', right_on='Lokasi')
-  df_beli2['persen rmh terbeli'] = round((df_beli2['rumah beli']/df_beli2['rumah jual'])*100, 2)
-  df_beli1 = pd.merge(df_beli1, df_beli2, how='left', left_on='Lokasi', right_on='Lokasi')
-
-
-  #hitung jarak (kolom jarak terhadap tempat kerja dalam KM)
-  _lat = lok_kota[lok_kota['kota'] == nama_kota]
-  _lat = _lat['latitude']
-  _lat = _lat.iloc[0]
-  _lon = lok_kota[lok_kota['kota'] == nama_kota]
-  _lon = _lon['longitude']
-  _lon = _lon.iloc[0]
-
-  df_beli1 = pd.merge(df_beli1, lokasi, how='left', left_on='Lokasi', right_on='Lokasi')
-
-  def haversine(lat1, lon1, lat2, lon2):
-      R = 6371  # radius of Earth in kilometers
-      phi1 = np.radians(lat1)
-      phi2 = np.radians(lat2)
-      delta_phi = np.radians(lat2 - lat1)
-      delta_lambda = np.radians(lon2 - lon1)
-      a = np.sin(delta_phi/2)**2 + np.cos(phi1) * np.cos(phi2) * np.sin(delta_lambda/2)**2
-      res = R * (2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a)))
-      return np.round(res, 2)
+  try:
+    nama_kota = str.upper(nama_kota)
   
-  df_beli1['jarak km'] = df_beli1.apply(lambda row: haversine(_lat, _lon, row['latitude'], row['longitude']), axis=1)
-  df_beli1 = df_beli1[df_beli1['jarak km'] <= jarak]
-  # df_beli1.drop(['latitude', 'longitude'], axis=1, inplace=True)
-  df_beli1.sort_values(by=['jarak km'], inplace=True)
+    suku_bunga = suku_bunga/100
+    uang_muka = uang_muka/100
+    max_cicilan = gaji*0.3
   
-  # df_beli1.dropna(subset=['latitude', 'longitude'], inplace=True)
   
-  #Initialize titik tengah peta. pakai mean dari tiap lokasi di df_beli1
+    #lokasi yang masuk kedalam cicilan (kolom Lokasi)
+    df['cicilan'] = (suku_bunga/12) * (1/ (1- (1+suku_bunga/12)**(-(hntenor_cicilan*12))))* df['Harga'] *(1-uang_muka)
+    df['cicilan'] = df['cicilan'].astype(float)
+    df_beli = df[df['cicilan'] <= max_cicilan]
   
-  mean_lat = df_beli1['latitude'].mean()
-  mean_long = df_beli1['longitude'].mean()
+    #groupby harga di average kolom harga rata2 (Kolom Harga Rata2)
+    df_beli1 = df_beli.groupby(['Lokasi'])['Harga'].mean().reset_index()
+    df_beli1 = round(df_beli1.rename(columns={'Harga': 'Harga Rata2'}))
   
-  map = folium.Map(location=[mean_lat, mean_long], zoom_start=10)
+    #Hitung Jumlah rumah yang dijual (% rumah terbeli)
+    df_beli2 = df_beli.groupby(['Lokasi'])['Harga'].count().reset_index()
+    df_beli2 = df_beli2.rename(columns={'Harga': 'rumah beli'})
+    df_beli3 = df.groupby(['Lokasi'])['Harga'].count().reset_index()
+    df_beli3 = df_beli3.rename(columns={'Harga': 'rumah jual'})
+    df_beli2 = pd.merge(df_beli2, df_beli3, how='left', left_on='Lokasi', right_on='Lokasi')
+    df_beli2['persen rmh terbeli'] = round((df_beli2['rumah beli']/df_beli2['rumah jual'])*100, 2)
+    df_beli1 = pd.merge(df_beli1, df_beli2, how='left', left_on='Lokasi', right_on='Lokasi')
+  
+  
+    #hitung jarak (kolom jarak terhadap tempat kerja dalam KM)
+    _lat = lok_kota[lok_kota['kota'] == nama_kota]
+    _lat = _lat['latitude']
+    _lat = _lat.iloc[0]
+    _lon = lok_kota[lok_kota['kota'] == nama_kota]
+    _lon = _lon['longitude']
+    _lon = _lon.iloc[0]
+  
+    df_beli1 = pd.merge(df_beli1, lokasi, how='left', left_on='Lokasi', right_on='Lokasi')
+  
+    def haversine(lat1, lon1, lat2, lon2):
+        R = 6371  # radius of Earth in kilometers
+        phi1 = np.radians(lat1)
+        phi2 = np.radians(lat2)
+        delta_phi = np.radians(lat2 - lat1)
+        delta_lambda = np.radians(lon2 - lon1)
+        a = np.sin(delta_phi/2)**2 + np.cos(phi1) * np.cos(phi2) * np.sin(delta_lambda/2)**2
+        res = R * (2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a)))
+        return np.round(res, 2)
+    
+    df_beli1['jarak km'] = df_beli1.apply(lambda row: haversine(_lat, _lon, row['latitude'], row['longitude']), axis=1)
+    df_beli1 = df_beli1[df_beli1['jarak km'] <= jarak]
+    # df_beli1.drop(['latitude', 'longitude'], axis=1, inplace=True)
+    df_beli1.sort_values(by=['jarak km'], inplace=True)
+    
+    # df_beli1.dropna(subset=['latitude', 'longitude'], inplace=True)
+    
+    #Initialize titik tengah peta. pakai mean dari tiap lokasi di df_beli1
+    
+    mean_lat = df_beli1['latitude'].mean()
+    mean_long = df_beli1['longitude'].mean()
+    
+    map = folium.Map(location=[mean_lat, mean_long], zoom_start=10)
+  
+    # Taruh marker di lokasi kerja
+    folium.Marker([_lat, _lon], 
+                  popup='Lokasi Kerja',
+                  icon=folium.Icon(color='red', icon='cloud')).add_to(map)
+    #Tambah marker untuk lokasi-lokasi rumah potensial
+    for index, row in df_beli1.iterrows():
+      folium.Marker([row['latitude'], row['longitude']], 
+                    popup=f"{row['Lokasi']}").add_to(map)
+  
+    df_beli1.drop(['latitude', 'longitude'], axis=1, inplace=True)
+  
+    st.dataframe(df_beli1, hide_index=True)
+    # Display the Folium map in Streamlit
+    st.write(map._repr_html_(), unsafe_allow_html=True)
+  except:
+    st.write(f'tidak ada rumah terjangkau pada jarak :blue[{jarak} kilometer]')
 
-  # Taruh marker di lokasi kerja
-  folium.Marker([_lat, _lon], 
-                popup='Lokasi Kerja',
-                icon=folium.Icon(color='red', icon='cloud')).add_to(map)
-  #Tambah marker untuk lokasi-lokasi rumah potensial
-  for index, row in df_beli1.iterrows():
-    folium.Marker([row['latitude'], row['longitude']], 
-                  popup=f"{row['Lokasi']}").add_to(map)
-
-  df_beli1.drop(['latitude', 'longitude'], axis=1, inplace=True)
-
-  st.dataframe(df_beli1, hide_index=True)
-  # Display the Folium map in Streamlit
-  st.write(map._repr_html_(), unsafe_allow_html=True)
-  
 
 def main():
    # judul
