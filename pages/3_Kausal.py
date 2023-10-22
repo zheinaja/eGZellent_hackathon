@@ -75,7 +75,7 @@ def cem(batas_tol, lokasi, m_jarak):
         koef_tol = hasil['coef'].values[1]
         #revert ln
         koef_tol = koef_tol-1
-        koef_tol = np.exp(real)
+        koef_tol = np.exp(koef_tol)
         
         conf_tol =hasil['P>|t|'].values[1]
         st.write(f'Dengan tingkat kepercayaan sebesar {100-conf_tol}%, efek keberadaan gerbang tol dengan radius \
