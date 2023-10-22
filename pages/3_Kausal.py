@@ -76,10 +76,19 @@ def cem(batas_tol, lokasi, m_jarak):
         #revert ln
         koef_tol = koef_tol-1
         koef_tol = np.exp(koef_tol)
-        
+    
         conf_tol =hasil['P>|t|'].values[1]
-        st.write(f'Dengan tingkat kepercayaan sebesar {100-conf_tol}%, efek keberadaan gerbang tol dengan radius \
+        CI = 100-conf_tol
+
+        if 99 <= CI <= 100:
+            st.write(f'Dengan tingkat kepercayaan sebesar 99%, efek keberadaan gerbang tol dengan radius \
               :blue[{batas_tol} kilometer] dari rumah berdampak pada peningkatan harga rumah sebesar :red[{np.round(koef_tol*100,2)}%]')
+        elif 95 <= CI < 99:
+            st.write(f'Dengan tingkat kepercayaan sebesar 95%, efek keberadaan gerbang tol dengan radius \
+              :blue[{batas_tol} kilometer] dari rumah berdampak pada peningkatan harga rumah sebesar :red[{np.round(koef_tol*100,2)}%]')
+        else:
+            st.write("hasil secara statistik tidak signifikan")
+            
     except ZeroDivisionError:
         st.write(f'Tidak ada rumah dalam radius\
               :blue[{batas_tol} kilometer] dari jalan tol')
