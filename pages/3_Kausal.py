@@ -80,7 +80,7 @@ def cem(batas_tol, lokasi, m_jarak):
         conf_tol =hasil['P>|t|'].values[1]
         st.write(f'Dengan tingkat kepercayaan sebesar {100-conf_tol}%, efek keberadaan gerbang tol dengan radius \
               :blue[{batas_tol} kilometer] dari rumah berdampak pada peningkatan harga rumah sebesar :red[{np.round(koef_tol*100,2)}%]')
-    except:
+    except ZeroDivisionError:
         st.write(f'Tidak ada rumah dalam radius\
               :blue[{batas_tol} kilometer] dari jalan tol')
 
