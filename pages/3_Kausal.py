@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import statsmodels.formula.api as sm
-import math
 from PIL import Image
 
 
@@ -76,7 +75,7 @@ def cem(batas_tol, lokasi, m_jarak):
         koef_tol = hasil['coef'].values[1]
         #revert ln
         koef_tol = koef_tol-1
-        koef_tol = math.exp(real)
+        koef_tol = np.exp(real)
         
         conf_tol =hasil['P>|t|'].values[1]
         st.write(f'Dengan tingkat kepercayaan sebesar {100-conf_tol}%, efek keberadaan gerbang tol dengan radius \
