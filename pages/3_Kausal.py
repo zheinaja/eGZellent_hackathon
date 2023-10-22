@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import statsmodels.formula.api as sm
+import math
 from PIL import Image
 
 
@@ -73,9 +74,13 @@ def cem(batas_tol, lokasi, m_jarak):
     
         hasil = pd.read_html(result.summary().tables[1].as_html(),header=0,index_col=0)[0]
         koef_tol = hasil['coef'].values[1]
+        #revert ln
+        koef_tol = koef_tol-1
+        koef_tol = math.exp(real)
+        
         conf_tol =hasil['P>|t|'].values[1]
         st.write(f'Dengan tingkat kepercayaan sebesar {100-conf_tol}%, efek keberadaan gerbang tol dengan radius \
-              :blue[{batas_tol} kilometer] dari rumah mengakibatkan peningkatan harga rumah sebesar :red[{np.round(koef_tol*100,2)}%]')
+              :blue[{batas_tol} kilometer] dari rumah berdampak pada peningkatan harga rumah sebesar :red[{np.round(koef_tol*100,2)}%]')
     except:
         st.write(f'Tidak ada rumah dalam radius\
               :blue[{batas_tol} kilometer] dari jalan tol')
@@ -114,7 +119,7 @@ def main():
                          'Rumah dengan jarak ke gerbang tol terdekat kurang 2 kilometer',
                          'Coarsened Exact Matching (CEM)', 
                          ' Luas Tanah, Luas Bangunan, dan Jumlah Kamar',
-                         'Terdapat perbedaan harga rumah sebesar 93,55% antara treatment grup dan control grup']} 
+                         'Terdapat perbedaan harga rumah sebesar 93,75% antara treatment grup dan control grup']} 
        st.dataframe(d_ate, width=1000, hide_index=True)
        st.write('Berikut ringkasan statistik hasil perhitungan CEM:')
        image = Image.open('Data/sum cem.png')
