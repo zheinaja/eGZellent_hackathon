@@ -105,9 +105,8 @@ def beli_rumah(nama_kota, hntenor_cicilan, suku_bunga, uang_muka, gaji, jarak):
     st.dataframe(df_beli1, hide_index=True)
     # Display the Folium map in Streamlit
     st.write(map._repr_html_(), unsafe_allow_html=True)
-  except:
+  except ValueError:
     st.write(f'tidak ada rumah terjangkau pada jarak :blue[{jarak} kilometer]')
-
 
 def main():
    # judul
