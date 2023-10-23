@@ -106,7 +106,7 @@ def beli_rumah(nama_kota, hntenor_cicilan, suku_bunga, uang_muka, gaji, jarak):
 
     #show Table
     st.dataframe(df_beli1.style.format({"jarak km": "{:,.2f}", "persen rmh terbeli": "{:,.2f}"})\
-      .highlight_min(subset=['rumah beli', "jarak km", "persen rmh terbeli"], axis=0), hide_index=True)
+      .highlight_min(subset=['rumah beli', "jarak km", "persen rmh terbeli"], axis=0), hide_index=True, width =1000)
     
     #show map
     st.write(map._repr_html_(), unsafe_allow_html=True)
