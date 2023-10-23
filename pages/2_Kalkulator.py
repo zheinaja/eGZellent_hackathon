@@ -107,7 +107,7 @@ def beli_rumah(nama_kota, hntenor_cicilan, suku_bunga, uang_muka, gaji, jarak):
     st.dataframe(df_beli1.style.highlight_min(axis=0), hide_index=True, width=1000)
     # Display the Folium map in Streamlit
     st.write(map._repr_html_(), unsafe_allow_html=True)
-  except ValueError:
+  except ValueError, ZeroDivisionError:
     st.write(f':red[tidak ada] rumah terjangkau pada radius :blue[{jarak} kilometer] dari lokasi kerja')
 
 def main():
