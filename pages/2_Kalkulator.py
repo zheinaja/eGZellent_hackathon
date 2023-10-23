@@ -103,9 +103,12 @@ def beli_rumah(nama_kota, hntenor_cicilan, suku_bunga, uang_muka, gaji, jarak):
     df_beli1.drop(['latitude', 'longitude'], axis=1, inplace=True)
     df_beli1['Harga Rata2'] = df_beli1['Harga Rata2'].astype(int)
     df_beli1['Harga Rata2'] = df_beli1['Harga Rata2'].apply(lambda x: '{:,}'.format(x))
-  
+
+    #show Table
     st.dataframe(df_beli1.style.format({"jarak km": "{:,.2f}", "persen rmh terbeli": "{:,.2f}"})\
-      .highlight_min(axis=0), hide_index=True)    # Display the Folium map in Streamlit
+      .highlight_min(subset=['rumah beli', "jarak km", "persen rmh terbeli"], axis=0), hide_index=True)
+    
+    #show map
     st.write(map._repr_html_(), unsafe_allow_html=True)
   except :
     st.write(f':red[tidak ada] rumah terjangkau pada radius :blue[{jarak} kilometer] dari lokasi kerja')
