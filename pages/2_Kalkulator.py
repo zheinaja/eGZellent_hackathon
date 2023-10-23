@@ -101,6 +101,8 @@ def beli_rumah(nama_kota, hntenor_cicilan, suku_bunga, uang_muka, gaji, jarak):
                     popup=f"{row['Lokasi']}").add_to(map)
   
     df_beli1.drop(['latitude', 'longitude'], axis=1, inplace=True)
+    df_beli1['Harga Rata2'] = df_beli1['Harga Rata2'].astype(int)
+
   
     st.dataframe(df_beli1.style.highlight_min(axis=0), hide_index=True, width=1000)
     # Display the Folium map in Streamlit
