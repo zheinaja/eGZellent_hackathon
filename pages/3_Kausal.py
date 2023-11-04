@@ -41,7 +41,7 @@ def cem(batas_tol, lokasi, m_jarak):
         df_run['tol'] = df_run.apply(treatment, axis=1)
     
         #log harga
-        df_run['log_harga'] = np.log2(df_run['Harga'])
+        df_run['log_harga'] = np.log(df_run['Harga'])
     
         # Count how many treated and control observations
         # are in each bin
